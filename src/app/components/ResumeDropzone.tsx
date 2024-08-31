@@ -1,198 +1,145 @@
-import { useState } from "react";
-// import { LockClosedIcon } from "@heroicons/react/24/solid";
-// import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
-import addPdfSrc from "public/assets/add-pdf.svg";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { FlexboxSpacer } from "./FlexboxSpacer";
+import Link from "next/link";
 import Image from "next/image";
 
-const defaultFileState = {
-  name: "",
-  size: 0,
-  fileUrl: "",
-};
+interface FileWithPreview extends File {
+  preview: string;
+}
 
-export const ResumeDropzone = ({
-  onFileUrlChange,
-  className,
-  playgroundView = false,
-}: {
-  onFileUrlChange: (fileUrl: string) => void;
-  className?: string;
-  playgroundView?: boolean;
-}) => {
-  const [file, setFile] = useState(defaultFileState);
-  const [isHoveredOnDropzone, setIsHoveredOnDropzone] = useState(false);
-  const [hasNonPdfFile, setHasNonPdfFile] = useState(false);
-  const router = useRouter();
+function ResumeDropzone() {
+  const [files, setFiles] = useState<FileWithPreview[]>([]);
 
-  const hasFile = Boolean(file.name);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFiles(
+      acceptedFiles.map((file: File) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      )
+    );
+  }, []);
 
-  const setNewFile = (newFile: File) => {
-    if (file.fileUrl) {
-      URL.revokeObjectURL(file.fileUrl);
-    }
+  useEffect(() => {
+    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [files]);
 
-    const { name, size } = newFile;
-    const fileUrl = URL.createObjectURL(newFile);
-    setFile({ name, size, fileUrl });
-    onFileUrlChange(fileUrl);
+  const handleUpload = () => {
+    const url = "https://api.cloudinary.com/v1_1/johnpaul/image/upload";
+    const formData = new FormData();
+    let file = files[0];
+    formData.append("file", file);
+    formData.append("upload_preset", "dryqolej");
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
   };
 
-  const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const newFile = event.dataTransfer.files[0];
-    if (newFile.name.endsWith(".pdf")) {
-      setHasNonPdfFile(false);
-      setNewFile(newFile);
-    } else {
-      setHasNonPdfFile(true);
-    }
-    setIsHoveredOnDropzone(false);
-  };
-
-  const onInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const newFile = files[0];
-    setNewFile(newFile);
-  };
-
-  const onRemove = () => {
-    setFile(defaultFileState);
-    onFileUrlChange("");
-  };
-
-  const onImportClick = async () => {
-    // const resume = await parseResumeFromPdf(file.fileUrl);
-    // const settings = deepClone(initialSettings);
-
-    // Set formToShow settings based on uploaded resume if users have used the app before
-    //   if (getHasUsedAppBefore()) {
-    //     const sections = Object.keys(settings.formToShow) as ShowForm[];
-    //     const sectionToFormToShow: Record<ShowForm, boolean> = {
-    //       workExperiences: resume.workExperiences.length > 0,
-    //       educations: resume.educations.length > 0,
-    //       projects: resume.projects.length > 0,
-    //       skills: resume.skills.descriptions.length > 0,
-    //       custom: resume.custom.descriptions.length > 0,
-    //     };
-    //     for (const section of sections) {
-    //       settings.formToShow[section] = sectionToFormToShow[section];
-    //     }
-    //   }
-
-    //   saveStateToLocalStorage({ resume, settings });
-    //   router.push("/resume-builder");
-    // };
-
-    return (
-      <div
-        className={`flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 ${
-          isHoveredOnDropzone ? "border-sky-400" : ""
-        } ${playgroundView ? "pb-6 pt-4" : "py-12"} ${className}`}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setIsHoveredOnDropzone(true);
+  const thumbs = files.map((file) => (
+    <div key={file.name}>
+      <iframe
+        src={file.preview}
+        title={file.name}
+        width="760px"
+        height="550px"
+        onLoad={() => {
+          URL.revokeObjectURL(file.preview);
         }}
-        onDragLeave={() => setIsHoveredOnDropzone(false)}
-        onDrop={onDrop}
-      >
-        <div
-          className={`text-center ${
-            playgroundView ? "space-y-2" : "space-y-3"
-          }`}
-        >
-          {!playgroundView && (
-            <Image
-              src={addPdfSrc}
-              className="mx-auto h-14 w-14"
-              alt="Add pdf"
-              aria-hidden="true"
-              priority
-            />
-          )}
-          {!hasFile ? (
-            <>
-              <p
-                className={`pt-3 text-gray-700 ${
-                  !playgroundView ? "text-lg font-semibold" : ""
-                }`}
-              >
-                Browse a pdf file or drop it here
-              </p>
-              <p className="flex text-sm text-gray-500">
-                {/* <LockClosedIcon className="mr-1 mt-1 h-3 w-3 text-gray-400" /> */}
-                File data is used locally and never leaves your browser
-              </p>
-            </>
-          ) : (
-            <div className="flex items-center justify-center gap-3 pt-3">
-              <div className="pl-7 font-semibold text-gray-900">
-                {file.name} - {getFileSizeString(file.size)}
-              </div>
-              <button
-                type="button"
-                className="outline-theme-blue rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                title="Remove file"
-                onClick={onRemove}
-              >
-                {/* <XMarkIcon className="h-6 w-6" /> */}
-              </button>
-            </div>
-          )}
-          <div className="pt-4">
-            {!hasFile ? (
-              <>
-                <label
-                  className={`within-outline-theme-purple cursor-pointer rounded-full px-6 pb-2.5 pt-2 font-semibold shadow-sm ${
-                    playgroundView ? "border" : "bg-primary"
-                  }`}
-                >
-                  Browse file
-                  <input
-                    type="file"
-                    className="sr-only"
-                    accept=".pdf"
-                    onChange={onInputChange}
-                  />
-                </label>
-                {hasNonPdfFile && (
-                  <p className="mt-6 text-red-400">
-                    Only pdf file is supported
-                  </p>
-                )}
-              </>
+      />
+    </div>
+  ));
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "application/pdf": [".pdf"] },
+  });
+
+  return (
+    <main className="mx-auto max-w-screen-2xl bg-dot px-8 pb-32 text-gray-900 lg:px-124 lg:flex flex-row">
+      <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
+        <div className="flex flex-col gap-5">
+          <h1 className="text-gray-800 pb-2 text-md font-normal lg:text-lg lg:mt-0">
+            We offer precise resume parsing, providing actionable insights for
+            improvement, and generate tailored mock interview questions.
+          </h1>
+          <h2 className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
+            Upload your resume here for parsing
+          </h2>
+          <h1 className="text-gray-600 pb-2 text-md font-normal lg:text-lg lg:mt-0">
+            Or if, you don't have one yet, use our{" "}
+            <Link
+              href="/resume-builder"
+              className="underline underline-offset-2"
+            >
+              resume builder
+            </Link>
+          </h1>
+          <FlexboxSpacer
+            maxWidth={75}
+            minWidth={0}
+            className="hidden lg:block"
+          />
+          <div
+            {...getRootProps()}
+            className="border-dashed border-2 border-gray-400 p-4 rounded-md mt-7"
+          >
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <p>Drop the PDF files here...</p>
             ) : (
-              <>
-                {!playgroundView && (
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={onImportClick}
-                  >
-                    Import and Continue <span aria-hidden="true">→</span>
-                  </button>
-                )}
-                <p className={`text-gray-500 ${!playgroundView ? "mt-6" : ""}`}>
-                  Note: {!playgroundView ? "Import" : "Parser"} works best on
-                  single column resume
+              <div className="flex flex-col justify-center items-center">
+                <p>
+                  Drag 'n' drop some PDF files here, or click to select PDF
+                  files
                 </p>
-              </>
+                <button className="btn-primary mt-6 lg:mt-10 lg:mb-2">
+                  Browse Files <span aria-hidden="true"></span>
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
-    );
-  };
-
-  const getFileSizeString = (fileSizeB: number) => {
-    const fileSizeKB = fileSizeB / 1024;
-    const fileSizeMB = fileSizeKB / 1024;
-    if (fileSizeKB < 1000) {
-      return fileSizeKB.toPrecision(3) + " KB";
-    } else {
-      return fileSizeMB.toPrecision(3) + " MB";
-    }
-  };
-};
+      <div>
+        <FlexboxSpacer
+          maxWidth={100}
+          minWidth={50}
+          className="hidden lg:block"
+        />
+        <div>
+          {files.length > 0 ? (
+            <div>
+              {/* <button className="button" onClick={handleUpload}>
+                Upload
+              </button> */}
+              <div className="border-dashed border-2 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
+                {thumbs}
+              </div>
+            </div>
+          ) : (
+            <div className="border-dashed border-2 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
+              <div className="flex flex-col justify-center items-center mt-40">
+                <Image
+                  src="/resume-parser2.svg"
+                  alt="resume"
+                  height={200}
+                  width={200}
+                />
+                Once You upload your resume you can preview it here.....
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+export default ResumeDropzone;
