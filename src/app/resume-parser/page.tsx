@@ -1,12 +1,11 @@
 "use client";
 import React from "react";
-import ResumeDropzone from "@/app/components/ResumeDropzone";
-import { FlexboxSpacer } from "@/app/components/FlexboxSpacer";
+import ResumeDropzone from "@/components/ResumeDropzone";
 
 export default function page() {
   return (
     <>
-      <main className="bg-dot pb-32 text-gray-900">
+      <main className="bg-dot text-gray-900">
         <ResumeDropzone />
       </main>
     </>
