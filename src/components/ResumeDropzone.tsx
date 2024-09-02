@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { FlexboxSpacer } from "./FlexboxSpacer";
 import Link from "next/link";
 import Image from "next/image";
+import { getS3URL, uploadFile } from "@/api/helper";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -25,22 +26,15 @@ function ResumeDropzone() {
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, [files]);
 
-  const handleUpload = () => {
-    const url = "https://api.cloudinary.com/v1_1/johnpaul/image/upload";
-    const formData = new FormData();
-    let file = files[0];
-    formData.append("file", file);
-    formData.append("upload_preset", "dryqolej");
-    fetch(url, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-      });
+  const handleUpload = async () => {
+    try {
+      const url = await getS3URL(`${files[0].name}`);
+      if (url) {
+        const uploadToS3 = await uploadFile(files[0], url);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const thumbs = files.map((file) => (
@@ -63,7 +57,7 @@ function ResumeDropzone() {
   });
 
   return (
-    <main className="mx-auto max-w-screen-2xl bg-dot px-8 pb-32 text-gray-900 lg:px-124 lg:flex flex-row">
+    <main className="mx-auto max-w-screen-2xl bg-dot px-8 text-gray-900 lg:flex flex-row">
       <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
         <div className="flex flex-col gap-5">
           <h1 className="text-gray-800 pb-2 text-md font-normal lg:text-lg lg:mt-0">
@@ -74,7 +68,7 @@ function ResumeDropzone() {
             Upload your resume here for parsing
           </h2>
           <h1 className="text-gray-600 pb-2 text-md font-normal lg:text-lg lg:mt-0">
-            Or if, you don't have one yet, use our{" "}
+            Or if, you don&apos;t have one yet, use our{" "}
             <Link
               href="/resume-builder"
               className="underline underline-offset-2"
@@ -97,7 +91,7 @@ function ResumeDropzone() {
             ) : (
               <div className="flex flex-col justify-center items-center">
                 <p>
-                  Drag 'n' drop some PDF files here, or click to select PDF
+                  Drag and drop some PDF files here, or click to select PDF
                   files
                 </p>
                 <button className="btn-primary mt-6 lg:mt-10 lg:mb-2">
@@ -120,12 +114,20 @@ function ResumeDropzone() {
               {/* <button className="button" onClick={handleUpload}>
                 Upload
               </button> */}
-              <div className="border-dashed border-2 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
+              <div className="border-dashed border-2 mt-4 border-gray-400 flex justify-center flex-col items-center rounded-md h-fit w-[800px] p-2">
                 {thumbs}
+                <div className="flex justify-end w-full">
+                  <button
+                    className="btn-primary mt-2 mr-3"
+                    onClick={handleUpload}
+                  >
+                    Upload
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="border-dashed border-2 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
+            <div className="border-dashed border-2 mt-4 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
               <div className="flex flex-col justify-center items-center mt-40">
                 <Image
                   src="/resume-parser2.svg"
