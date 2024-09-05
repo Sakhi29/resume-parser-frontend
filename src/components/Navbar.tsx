@@ -23,7 +23,7 @@ export const NavBar = () => {
             height={40}
             width={40}
           />
-          <div className="ml-2 text-primary font-bold text-2xl">Career AI</div>
+          <div className="ml-2 text-primary font-bold text-2xl">CareerAI</div>
         </Link>
 
         <nav
