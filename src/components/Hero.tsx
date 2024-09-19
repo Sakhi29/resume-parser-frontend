@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { FlexboxSpacer } from "./FlexboxSpacer";
 import Image from "next/image";
@@ -5,6 +6,8 @@ import free from "/public/free.png";
 import oneCol from "/public/agreement.png";
 import accurate from "/public/accurate.png";
 import interview from "/public/interview.png";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 
 const STEPS = [
   { title: "Upload a resume pdf", text: "or create from scratch" },
@@ -36,6 +39,13 @@ const FEATURES = [
 ];
 
 export const Hero = () => {
+  const router = useRouter();
+  const { data } = useSession();
+  const onGoogleSignIn = () => {
+    signIn("google", {
+      callbackUrl: "/resume-builder",
+    });
+  };
   return (
     <>
       <section className="lg:flex lg:h-[750px] lg:justify-center">
@@ -49,10 +59,29 @@ export const Hero = () => {
           <p className="mt-3 text-lg lg:mt-5 lg:text-xl">
             From resume creation to interview simulation, we've got you covered
           </p>
-          <Link href="/resume-builder" className="btn-primary mt-6 lg:mt-14">
+          {/* <Link href="/resume-builder" className="btn-primary mt-6 lg:mt-14">
             Create Resume <span aria-hidden="true">→</span>
-          </Link>
-          <p className="ml-6 mt-3 text-sm text-gray-600">No sign up required</p>
+          </Link> */}
+          {data && (
+            <div className="space-x-4">
+              <button
+                className="btn-primary mt-6 lg:mt-14"
+                onClick={() => router.push("/resume-builder")}
+              >
+                Create Resume<span aria-hidden="true">→</span>
+              </button>
+            </div>
+          )}
+          {!data && (
+            <div>
+              <button
+                className="btn-primary mt-6 lg:mt-14"
+                onClick={onGoogleSignIn}
+              >
+                Create Resume<span aria-hidden="true">→</span>
+              </button>
+            </div>
+          )}
           <p className="mt-3 text-sm text-gray-600 lg:mt-20">
             Already have a resume? Test its ATS readability with the{" "}
             <Link
