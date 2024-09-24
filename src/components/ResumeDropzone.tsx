@@ -4,6 +4,7 @@ import { FlexboxSpacer } from "./FlexboxSpacer";
 import Link from "next/link";
 import Image from "next/image";
 import { getS3URL, uploadFile } from "@/api/helper";
+import { toast } from "sonner";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -31,8 +32,10 @@ function ResumeDropzone() {
       const url = await getS3URL(`${files[0].name}`);
       if (url) {
         const uploadToS3 = await uploadFile(files[0], url);
+        toast.success("File Uploaded successfully!");
       }
     } catch (err) {
+      toast.error("Unable to upload file!");
       console.log(err);
     }
   };
@@ -135,7 +138,7 @@ function ResumeDropzone() {
                   height={200}
                   width={200}
                 />
-                Once You upload your resume you can preview it here.....
+                Once you upload your resume you can preview it here.....
               </div>
             </div>
           )}
