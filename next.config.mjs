@@ -7,6 +7,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/resume-builder",
+        destination: "https://careerai-resume-builder.vercel.app",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
