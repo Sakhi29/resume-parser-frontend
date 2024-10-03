@@ -28,9 +28,7 @@ export const NavBar = () => {
   return (
     <header
       aria-label="Site Header"
-      className={`flex h-[var(--top-nav-bar-height)] items-center border-b-2 border-gray-100 px-3 lg:px-12 ${
-        isHomePage ? "bg-dot" : ""
-      }`}
+      className={`flex h-[var(--top-nav-bar-height)] items-center border-b-2 border-gray-100 px-3 lg:px-12 bg-dot`}
     >
       <div className="flex h-10 w-full items-center justify-between">
         <Link href="/" className="flex items-center">
@@ -51,6 +49,7 @@ export const NavBar = () => {
           {[
             ["/resume-builder", "Builder"],
             ["/resume-parser", "Parser"],
+            ["/interview", "Interview"],
           ].map(([href, text]) => (
             <Link
               key={text}

@@ -5,7 +5,7 @@ import ResumeDropzone from "@/components/ResumeDropzone";
 export default function page() {
   return (
     <>
-      <main className="bg-dot text-gray-900">
+      <main className="bg-dot text-gray-900 pb-10">
         <ResumeDropzone />
       </main>
     </>

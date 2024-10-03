@@ -2,7 +2,7 @@ import React from "react";
 
 function Footer() {
   return (
-    <div className="pt-32">
+    <div className="">
       <section className="flex flex-col gap-5 justify-center items-center bg-primary w-full h-[400px]">
         <div className="uppercase text-gray-300">
           Upskill for a better future

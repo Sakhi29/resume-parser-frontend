@@ -1,3 +1,4 @@
+import React from "react";
 import { NavBar } from "@/components/Navbar";
 import "./globals.css";
 import { Hero } from "@/components/Hero";

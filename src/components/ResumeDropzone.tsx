@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getS3URL, uploadFile } from "@/api/helper";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -12,7 +13,9 @@ interface FileWithPreview extends File {
 
 function ResumeDropzone() {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
-
+  const [isUploading, setIsUploading] = useState(false);
+  const { data }: any = useSession();
+  console.log(data);
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(
       acceptedFiles.map((file: File) =>
@@ -28,8 +31,9 @@ function ResumeDropzone() {
   }, [files]);
 
   const handleUpload = async () => {
+    setIsUploading(true);
     try {
-      const url = await getS3URL(`${files[0].name}`);
+      const url = await getS3URL(`uploads/${data.user?.id}_${files[0].name}`);
       if (url) {
         const uploadToS3 = await uploadFile(files[0], url);
         toast.success("File Uploaded successfully!");
@@ -37,6 +41,8 @@ function ResumeDropzone() {
     } catch (err) {
       toast.error("Unable to upload file!");
       console.log(err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -60,7 +66,7 @@ function ResumeDropzone() {
   });
 
   return (
-    <main className="mx-auto max-w-screen-2xl bg-dot px-8 text-gray-900 lg:flex flex-row">
+    <main className="mx-auto max-w-screen-2xl px-8 text-gray-900 lg:flex flex-row">
       <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
         <div className="flex flex-col gap-5">
           <h1 className="text-gray-800 pb-2 text-md font-normal lg:text-lg lg:mt-0">
@@ -121,10 +127,13 @@ function ResumeDropzone() {
                 {thumbs}
                 <div className="flex justify-end w-full">
                   <button
-                    className="btn-primary mt-2 mr-3"
+                    className={`btn-primary mt-2 mr-3 ${
+                      isUploading ? "cursor-not-allowed" : ""
+                    }`}
                     onClick={handleUpload}
+                    disabled={isUploading}
                   >
-                    Upload
+                    {isUploading ? "Uploading..." : "Upload"}
                   </button>
                 </div>
               </div>
