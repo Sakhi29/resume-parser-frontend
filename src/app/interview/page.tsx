@@ -4,13 +4,16 @@ import React from "react";
 import interviewImage from "/public/Artboard 59@4x.png";
 import { FlexboxSpacer } from "@/components/FlexboxSpacer";
 import { Lightbulb } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function page() {
+  const { data }: any = useSession();
   return (
     <>
       <main className="mx-auto max-w-screen-2xl bg-dot px-8 text-gray-900 lg:flex flex-row">
         <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-6">
             {/* <h1 className="text-gray-800 pb-2 text-md font-normal lg:text-lg lg:mt-0">
               We offer precise resume parsing, providing actionable insights for
               improvement, and generate tailored mock interview questions.
@@ -48,9 +51,12 @@ export default function page() {
               </h1>
             </div>
             <div className="flex justify-center items-center">
-              <button className="btn-primary px-1.5 py-2 rounded-md lg:px-4">
+              <Link
+                href={`interview/${data?.user?.id}`}
+                className="btn-primary px-1.5 py-2 rounded-full lg:px-4"
+              >
                 Start Interview
-              </button>
+              </Link>
             </div>
 
             <FlexboxSpacer
