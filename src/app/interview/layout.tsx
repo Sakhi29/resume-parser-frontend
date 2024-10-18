@@ -7,9 +7,9 @@ export default function TemplateCreateLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative">
+    <div className="min-h-screen flex flex-col bg-dot">
       <NavBar />
-      <div>{children}</div>
+      <main className="flex-grow">{children}</main>
       <Footer />
     </div>
   );

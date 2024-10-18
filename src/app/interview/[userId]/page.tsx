@@ -1,198 +1,99 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
-import swal from "sweetalert";
-import * as tf from "@tensorflow/tfjs";
-import * as posenet from "@tensorflow-models/posenet";
-import Webcam from "react-webcam";
+import React, { useState, useEffect } from "react";
+import WebCamera from "@/components/WebCamera";
+import { Image } from "lucide-react";
 
-const Posenet = () => {
-  const webcamRef = useRef<Webcam | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  const [prevEyePositions, setPrevEyePositions] = useState({
-    leftEye: { x: null as number | null, y: null as number | null },
-    rightEye: { x: null as number | null, y: null as number | null },
-  });
-
-  // Load posenet
-  const runPosenet = async () => {
-    // Initialize TensorFlow.js backend
-    await tf.setBackend("webgl");
-    await tf.ready();
-
-    const net = await posenet.load({
-      architecture: "ResNet50",
-      quantBytes: 2,
-      inputResolution: { width: 640, height: 480 },
-      outputStride: 32, // Add the outputStride property
-    });
-    setInterval(() => {
-      detect(net);
-    }, 500);
-  };
-
-  const detect = async (net: posenet.PoseNet) => {
-    if (
-      webcamRef.current &&
-      webcamRef.current.video &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      const videoWidth = video.videoWidth;
-      const videoHeight = video.videoHeight;
-
-      // Set video width
-      video.width = videoWidth;
-      video.height = videoHeight;
-
-      // Make Detections
-      const pose = await net.estimateSinglePose(video);
-
-      EyeMovementDetect(pose["keypoints"], 0.8);
-      EarsDetect(pose["keypoints"], 0.8); // Call the ear movement detection as well
-    }
-  };
-
-  // Eye Movement Detection
-  const EyeMovementDetect = (
-    keypoints: posenet.Keypoint[],
-    minConfidence: number
-  ) => {
-    const keypointEyeL = keypoints[1]; // Left Eye
-    const keypointEyeR = keypoints[2]; // Right Eye
-
-    // Check confidence of both eyes
-    if (
-      keypointEyeL.score > minConfidence &&
-      keypointEyeR.score > minConfidence
-    ) {
-      const currentEyePositions = {
-        leftEye: { x: keypointEyeL.position.x, y: keypointEyeL.position.y },
-        rightEye: { x: keypointEyeR.position.x, y: keypointEyeR.position.y },
-      };
-
-      // Compare with previous positions
-      if (
-        prevEyePositions.leftEye.x !== null &&
-        prevEyePositions.rightEye.x !== null
-      ) {
-        const movementLeft = getMovement(
-          prevEyePositions.leftEye,
-          currentEyePositions.leftEye
-        );
-        const movementRight = getMovement(
-          prevEyePositions.rightEye,
-          currentEyePositions.rightEye
-        );
-
-        if (
-          movementLeft.direction === movementRight.direction &&
-          movementLeft.direction !== "none"
-        ) {
-          swal(`Your eyes moved ${movementLeft.direction}`);
-        }
-      }
-
-      // Update previous eye positions
-      setPrevEyePositions(currentEyePositions);
-    }
-  };
-
-  // Ear Movement Detection
-  const EarsDetect = (keypoints: posenet.Keypoint[], minConfidence: number) => {
-    const keypointEyeL = keypoints[1]; // Left Eye
-    const keypointEyeR = keypoints[2]; // Right Eye
-    const keypointEarL = keypoints[4]; // Left Ear
-    const keypointEarR = keypoints[3]; // Right Ear
-
-    // Check confidence of eyes and ears
-    if (
-      keypointEyeL.score > minConfidence &&
-      keypointEyeR.score > minConfidence &&
-      keypointEarL.score > minConfidence &&
-      keypointEarR.score > minConfidence
-    ) {
-      const eyeMidpoint = {
-        x: (keypointEyeL.position.x + keypointEyeR.position.x) / 2,
-        y: (keypointEyeL.position.y + keypointEyeR.position.y) / 2,
-      };
-
-      const angleLeft = Math.atan2(
-        keypointEarL.position.y - eyeMidpoint.y,
-        keypointEarL.position.x - eyeMidpoint.x
-      );
-      const angleRight = Math.atan2(
-        keypointEarR.position.y - eyeMidpoint.y,
-        keypointEarR.position.x - eyeMidpoint.x
-      );
-
-      const angleThreshold = Math.PI / 6; // 30 degrees
-
-      if (angleLeft < -angleThreshold) {
-        swal("You looked away from the Screen (To the Left)");
-      }
-      if (angleRight > angleThreshold) {
-        swal("You looked away from the Screen (To the Right)");
-      }
-    }
-  };
-
-  // Calculate eye movement direction
-  const getMovement = (
-    prevPosition: { x: number | null; y: number | null },
-    currentPosition: { x: number; y: number }
-  ) => {
-    const dx = currentPosition.x - (prevPosition.x || 0);
-    const dy = currentPosition.y - (prevPosition.y || 0);
-
-    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-      if (Math.abs(dx) > Math.abs(dy)) {
-        return { direction: dx > 0 ? "right" : "left" };
-      } else {
-        return { direction: dy > 0 ? "down" : "up" };
-      }
-    }
-
-    return { direction: "none" };
-  };
+export default function Page() {
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    runPosenet();
+    const storedQuestions = localStorage.getItem("interviewQuestions");
+    if (storedQuestions) {
+      setQuestions(JSON.parse(storedQuestions));
+    }
+    setIsLoading(false);
   }, []);
 
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    } else {
+      setIsCompleted(true);
+      localStorage.removeItem("interviewQuestions");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
+        <div className="text-primary">Loading questions...</div>
+        <Image
+          src="/Webinar-rafiki.svg"
+          alt="resume"
+          height={200}
+          width={200}
+        />
+      </div>
+    );
+  }
+
+  if (!questions.length) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
+        <div className="text-red-500">
+          No questions found. Please return to the previous page.
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <Webcam
-        ref={webcamRef}
-        style={{
-          position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          zIndex: 9,
-          width: 640,
-          height: 480,
-        }}
-      />
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          zIndex: 9,
-          width: 640,
-          height: 480,
-        }}
-      />
+    <div className="border-dashed border-2 border-gray-400 p-4 rounded-md mx-auto w-full max-w-6xl my-10">
+      <div className="relative container mx-auto px-4 py-8">
+        {/* Webcam Interface */}
+        <div className="absolute top-4 right-4 w-[350px] h-[200px] shadow-md rounded-lg overflow-hidden">
+          <WebCamera />
+        </div>
+
+        {/* Main Content Area with Questions */}
+        <div className="flex flex-col justify-stretch">
+          {!isCompleted ? (
+            <div className="w-full max-w-2xl p-6">
+              <div className="mb-4">
+                <span className="text-primary font-semibold">
+                  Question {currentQuestionIndex + 1} of {questions.length}
+                </span>
+              </div>
+              <h2 className="text-xl font-semibold mb-8">
+                {questions[currentQuestionIndex]}
+              </h2>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleNext}
+                  className="btn-primary px-6 py-2 rounded-full"
+                >
+                  {currentQuestionIndex === questions.length - 1
+                    ? "Finish"
+                    : "Next Question"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-primary">
+                Interview Completed!
+              </h2>
+              <p className="mt-4 text-gray-600">
+                Thank you for completing the interview. Your responses have been
+                recorded.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Posenet;
+}
