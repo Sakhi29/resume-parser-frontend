@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import WebCamera from "@/components/WebCamera";
-import { Image } from "lucide-react";
+import Image from "next/image";
 
 export default function Page() {
   const [questions, setQuestions] = useState<string[]>([]);
@@ -54,9 +54,11 @@ export default function Page() {
     <div className="border-dashed border-2 border-gray-400 p-4 rounded-md mx-auto w-full max-w-6xl my-10">
       <div className="relative container mx-auto px-4 py-8">
         {/* Webcam Interface */}
-        <div className="absolute top-4 right-4 w-[350px] h-[200px] shadow-md rounded-lg overflow-hidden">
-          <WebCamera />
-        </div>
+        {!isCompleted && (
+          <div className="absolute top-4 right-4 w-[350px] h-[200px] shadow-md rounded-lg overflow-hidden">
+            <WebCamera />
+          </div>
+        )}
 
         {/* Main Content Area with Questions */}
         <div className="flex flex-col justify-stretch">

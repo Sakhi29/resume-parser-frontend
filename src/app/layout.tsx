@@ -19,7 +19,7 @@ export default function RootLayout({
       <body>
         <CustomProvider>
           {/* <NavBar /> */}
-          <Toaster richColors />
+          <Toaster richColors closeButton/>
           {children}
           {/* <Footer /> */}
         </CustomProvider>

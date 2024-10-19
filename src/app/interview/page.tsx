@@ -7,6 +7,8 @@ import { Lightbulb } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { generateQuestions } from "@/api/helper";
+import { toast } from "sonner";
+import { div } from "@tensorflow/tfjs";
 
 interface QuestionResponse {
   questions: string[];
@@ -44,10 +46,18 @@ export default function page() {
       router.push(`/interview/${data?.user?.id}`);
     } catch (error) {
       console.error("Error details:", error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Failed to generate questions. Please try again."
+      toast.error(
+        <div>
+          <div>Please upload your resume for parsing</div>
+          <button
+            onClick={() => {
+              router.push("/resume-parser");
+            }}
+            className="mt-2 bg-primary px-2 py-1 rounded-md"
+          >
+            Go to Parser
+          </button>
+        </div>
       );
     } finally {
       setIsLoading(false);

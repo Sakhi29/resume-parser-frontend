@@ -6,6 +6,7 @@ import Image from "next/image";
 import { getS3URL, uploadFile } from "@/api/helper";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -15,6 +16,7 @@ function ResumeDropzone() {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const { data }: any = useSession();
+  const router = useRouter();
   console.log(data);
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(
@@ -36,7 +38,19 @@ function ResumeDropzone() {
       const url = await getS3URL(`uploads/${data.user?.id}_${files[0].name}`);
       if (url) {
         const uploadToS3 = await uploadFile(files[0], url);
-        toast.success("File Uploaded successfully!");
+        toast.success(
+          <div>
+            <div>File uploaded successfully!</div>
+            <button
+              onClick={() => {
+                router.push("/interview");
+              }}
+              className="mt-2 bg-primary px-2 py-1 rounded-md"
+            >
+              Go to Interview
+            </button>
+          </div>
+        );
       }
     } catch (err) {
       toast.error("Unable to upload file!");
