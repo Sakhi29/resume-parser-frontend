@@ -3,7 +3,7 @@ import axios from "axios";
 export const getS3URL = async (objectName: string) => {
   try {
     const response = await axios.get(
-      `${process.env.AWS_API_ENDPOINT}/resume-parser-backend-stage/get-s3-presigned-url`,
+      `${process.env.NEXT_PUBLIC_AWS_API_ENDPOINT}/resume-parser-backend-stage/get-s3-presigned-url`,
       {
         params: { object_name: objectName },
       }
@@ -42,7 +42,7 @@ export async function uploadFile(file: any, uploadURL: string) {
 export const generateQuestions = async (userId: string) => {
   try {
     const response = await axios.post(
-      `${process.env.AWS_API_ENDPOINT}/resume-parser-backend-stage/generate-questions`,
+      `${process.env.NEXT_PUBLIC_AWS_API_ENDPOINT}/resume-parser-backend-stage/generate-questions`,
       {
         userId: userId,
       },

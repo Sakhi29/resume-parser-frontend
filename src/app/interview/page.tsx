@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { generateQuestions } from "@/api/helper";
 import { toast } from "sonner";
-import { div } from "@tensorflow/tfjs";
 
 interface QuestionResponse {
   questions: string[];
