@@ -82,9 +82,6 @@ export const NavBar = () => {
               <DropdownMenuContent className="mr-3">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/profile")}>
-                  Profile
-                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={onGoogleSignOut}
                   className="cursor-pointer"
