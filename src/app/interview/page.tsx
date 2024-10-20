@@ -13,7 +13,7 @@ interface QuestionResponse {
   questions: string[];
 }
 
-export default function page() {
+export default function InterviewPage() {
   const { data }: any = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function page() {
       // Store questions in localStorage
       localStorage.setItem("interviewQuestions", JSON.stringify(questions));
 
-      // Navigate to interview page
+      // Navigate to interview InteviewPage
       router.push(`/interview/${data?.user?.id}`);
     } catch (error) {
       console.error("Error details:", error);
@@ -69,12 +69,12 @@ export default function page() {
         <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
           <div className="flex flex-col gap-6">
             <h2 className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
-              You're all set!
+              You&apos;re all set!
             </h2>
             <h2 className="text-gray-600 pb-2 text-2xl font-bold lg:text-3xl lg:mt-0">
               Click{" "}
               <span className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
-                'Start Interview'
+                &apos;Start Interview&apos;
               </span>{" "}
               to practice with tailored questions.
             </h2>

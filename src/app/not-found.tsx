@@ -15,11 +15,11 @@ function NotFound() {
           className="mx-auto text-primary"
         />
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Oops, the page you're looking for can't be found
+          Oops, the page you&apos;re looking for can&apos;t be found
         </h1>
         <p className="mt-4 text-muted-foreground">
-          It seems the page you requested doesn't exist in our website. Don't
-          worry, we're here to help you get back on track.
+          It seems the page you requested doesn&apos;t exist in our website.
+          Don&apos;t worry, we&apos;re here to help you get back on track.
         </p>
         <div className="mt-6">
           <Link
