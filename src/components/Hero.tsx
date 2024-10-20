@@ -57,7 +57,8 @@ export const Hero = () => {
             Your All-in-One Career Launchpad
           </h1>
           <p className="mt-3 text-lg lg:mt-5 lg:text-xl">
-            From resume creation to interview simulation, we've got you covered
+            From resume creation to interview simulation, we&apos;ve got you
+            covered
           </p>
           {/* <Link href="/resume-builder" className="btn-primary mt-6 lg:mt-14">
             Create Resume <span aria-hidden="true">→</span>
