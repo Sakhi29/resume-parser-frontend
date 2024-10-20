@@ -19,7 +19,7 @@ export const NavBar = () => {
   const { data } = useSession();
   const router = useRouter();
   const onGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/resume-builder" });
+    signIn("google", { callbackUrl: "/" });
   };
   const onGoogleSignOut = () => {
     signOut({ callbackUrl: "/", redirect: true });
