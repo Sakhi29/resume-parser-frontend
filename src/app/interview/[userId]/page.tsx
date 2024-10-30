@@ -2,12 +2,25 @@
 import React, { useState, useEffect } from "react";
 import WebCamera from "@/components/WebCamera";
 import Image from "next/image";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 export default function Page() {
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  // if (!browserSupportsSpeechRecognition) {
+  //     return (<span>Browser doesn`&apos;`t support speech recognition.</span>)
+  // }
 
   useEffect(() => {
     const storedQuestions = localStorage.getItem("interviewQuestions");
@@ -72,6 +85,24 @@ export default function Page() {
               <h2 className="text-xl font-semibold mb-8">
                 {questions[currentQuestionIndex]}
               </h2>
+              <p> {listening ? "on" : "off"} </p>
+              <button
+                onClick={() => {
+                  SpeechRecognition.startListening();
+                }}
+                className="btn-primary px-6 py-2 rounded-full"
+              >
+                start recording
+              </button>
+              <button
+                onClick={() => {
+                  SpeechRecognition.stopListening();
+                }}
+                className="btn-primary px-6 py-2 rounded-full"
+              >
+                stop recording
+              </button>
+              <p>transcipt: {transcript}</p>
               <div className="flex justify-end">
                 <button
                   onClick={handleNext}
