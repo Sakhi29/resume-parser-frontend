@@ -15,6 +15,7 @@ independent service:
 1. Resume Builder Service 
 2. Resume Parser Service 
 3. Mock Interview Service 
+   
 These services communicate through RESTful APIs, with a central AWS API Gateway 
 managing requests and Single Sign On provider, Google Oauth, for user authentication.
 
