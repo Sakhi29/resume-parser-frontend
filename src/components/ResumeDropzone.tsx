@@ -63,12 +63,11 @@ export const ResumeDropzone: React.FC = () => {
   };
 
   const thumbs = files.map((file) => (
-    <div key={file.name}>
+    <div key={file.name} className="w-full">
       <iframe
         src={file.preview}
         title={file.name}
-        width="760px"
-        height="550px"
+        className="w-full h-[300px] sm:h-[400px] lg:h-[500px]"
         onLoad={() => {
           URL.revokeObjectURL(file.preview);
         }}
@@ -82,33 +81,36 @@ export const ResumeDropzone: React.FC = () => {
   });
 
   return (
-    <div>
+    <div className="w-full">
       <div
         {...getRootProps()}
-        className="border-dashed border-2 border-gray-400 p-4 rounded-md mt-7"
+        className="border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors duration-200 ease-in-out hover:border-primary/60 cursor-pointer"
       >
         <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Drop the PDF files here...</p>
-        ) : (
-          <div className="flex flex-col justify-center items-center">
-            <p>
-              Drag and drop some PDF files here, or click to select PDF files
-            </p>
-            <button className="btn-primary mt-6 lg:mt-10 lg:mb-2">
-              Browse Files <span aria-hidden="true"></span>
-            </button>
-          </div>
-        )}
+        <div className="flex flex-col items-center justify-center space-y-4 py-8 px-4 text-center">
+          {isDragActive ? (
+            <p className="text-primary text-lg">Drop your PDF file here...</p>
+          ) : (
+            <>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Drag and drop your PDF file here, or click to select
+              </p>
+              <button className="btn-primary mt-2">
+                Browse Files
+              </button>
+            </>
+          )}
+        </div>
       </div>
+
       {files.length > 0 && (
-        <div className="border-dashed border-2 mt-4 border-gray-400 flex justify-center flex-col items-center rounded-md h-fit w-[800px] p-2">
-          {thumbs}
-          <div className="flex justify-end w-full">
+        <div className="mt-6 space-y-4">
+          <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
+            {thumbs}
+          </div>
+          <div className="flex justify-end">
             <button
-              className={`btn-primary mt-2 mr-3 ${
-                isUploading ? "cursor-not-allowed" : ""
-              }`}
+              className={`btn-primary ${isUploading ? "opacity-70 cursor-not-allowed" : ""}`}
               onClick={handleUpload}
               disabled={isUploading}
             >

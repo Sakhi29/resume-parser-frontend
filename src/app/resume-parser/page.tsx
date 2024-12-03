@@ -6,50 +6,44 @@ import { ResumeDropzone } from "@/components/ResumeDropzone";
 
 export default function Page() {
   return (
-    <main className="mx-auto max-w-screen-2xl px-8 text-gray-900 lg:flex flex-row">
-      <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
-        <div className="flex flex-col gap-5">
-          <h1 className="text-gray-800 pb-2 text-md font-normal lg:text-lg lg:mt-0">
+    <main className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-8 text-gray-900">
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* Left Column - Upload Section */}
+        <div className="flex flex-col space-y-6 max-w-xl mx-auto lg:mx-0">
+          <h1 className="text-gray-800 text-base sm:text-lg font-normal">
             We offer precise resume parsing, providing actionable insights for
             improvement, and generate tailored mock interview questions.
           </h1>
-          <h2 className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
+          <h2 className="text-primary text-2xl sm:text-3xl font-bold">
             Upload your resume here for parsing
           </h2>
-          <h1 className="text-gray-600 pb-2 text-md font-normal lg:text-lg lg:mt-0">
+          <p className="text-gray-600 text-base sm:text-lg font-normal">
             Or if, you don&apos;t have one yet, use our{" "}
             <Link
               href="/resume-builder"
-              className="underline underline-offset-2"
+              className="text-primary hover:text-primary/80 underline underline-offset-2"
             >
               resume builder
             </Link>
-          </h1>
-          <FlexboxSpacer
-            maxWidth={75}
-            minWidth={0}
-            className="hidden lg:block"
-          />
+          </p>
           {/* ResumeDropzone will handle client-side state */}
           <ResumeDropzone />
         </div>
-      </div>
-      <div>
-        <FlexboxSpacer
-          maxWidth={100}
-          minWidth={50}
-          className="hidden lg:block"
-        />
-        <div>
-          <div className="border-dashed border-2 mt-4 border-gray-400 p-4 rounded-md h-[600px] w-[800px]">
-            <div className="flex flex-col justify-center items-center mt-40">
+
+        {/* Right Column - Preview Section */}
+        <div className="w-full max-w-3xl mx-auto lg:mx-0">
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 h-[400px] sm:h-[500px] lg:h-[600px] w-full">
+            <div className="flex flex-col items-center justify-center h-full space-y-6">
               <Image
                 src="/resume-parser2.svg"
-                alt="resume"
-                height={200}
-                width={200}
+                alt="resume preview"
+                height={150}
+                width={150}
+                className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48"
               />
-              Once you upload your resume you can preview it here.....
+              <p className="text-gray-500 text-center text-sm sm:text-base">
+                Once you upload your resume you can preview it here.....
+              </p>
             </div>
           </div>
         </div>
