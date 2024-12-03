@@ -12,19 +12,6 @@ interface InterviewType {
   answer: string;
 }
 
-const dummyQuestions = [
-  "1. Can you explain the difference between HTML, CSS, and JavaScript?",
-  "2. What are some new features introduced in HTML5?",
-  "3. Describe the CSS box model and how it affects element layout on a web page.",
-  "4. How does Flexbox differ from CSS Grid, and when would you use each?",
-  "5. Explain the concept of closures in JavaScript and provide an example use case.",
-  "6. What is the DOM, and how does JavaScript interact with it?",
-  "7. Can you explain the purpose of asynchronous programming in JavaScript? How do promises and async/await help?",
-  "8. What are RESTful APIs, and how would you use one in a web application?",
-  "9. How does client-side routing work in a single-page application (SPA)?",
-  "10. Explain the difference between SQL and NoSQL databases. What are some use cases for each?",
-];
-
 export default function Page() {
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -39,9 +26,7 @@ export default function Page() {
 
   useEffect(() => {
     const storedQuestions = localStorage.getItem("interviewQuestions");
-    if (!storedQuestions) {
-      setQuestions(dummyQuestions);
-    }
+    setQuestions(storedQuestions ? JSON.parse(storedQuestions) : []);
     setIsLoading(false);
   }, []);
 
@@ -90,11 +75,11 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <div className="text-primary">Loading questions...</div>
+      <div className='flex justify-center items-center min-h-[calc(100vh-200px)]'>
+        <div className='text-primary'>Loading questions...</div>
         <Image
-          src="/Webinar-rafiki.svg"
-          alt="resume"
+          src='/Webinar-rafiki.svg'
+          alt='resume'
           height={200}
           width={200}
         />
@@ -104,8 +89,8 @@ export default function Page() {
 
   if (!questions.length) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-        <div className="text-red-500">
+      <div className='flex justify-center items-center min-h-[calc(100vh-200px)]'>
+        <div className='text-red-500'>
           No questions found. Please return to the previous page.
         </div>
       </div>
@@ -113,32 +98,32 @@ export default function Page() {
   }
 
   return (
-    <div className="border-dashed border-2 border-gray-400 p-4 rounded-md mx-auto w-full max-w-6xl my-10">
-      <div className="relative container mx-auto px-4 py-8">
+    <div className='border-dashed border-2 border-gray-400 p-4 rounded-md mx-auto w-full max-w-6xl my-10'>
+      <div className='relative container mx-auto px-4 py-8'>
         {/* Webcam Interface */}
         {!isCompleted && (
-          <div className="absolute top-4 right-4 w-[350px] h-[200px] shadow-md rounded-lg overflow-hidden">
+          <div className='absolute top-4 right-4 w-[350px] h-[200px] shadow-md rounded-lg overflow-hidden'>
             <WebCamera />
           </div>
         )}
 
         {/* Main Content Area with Questions or Evaluation */}
-        <div className="flex flex-col justify-stretch">
+        <div className='flex flex-col justify-stretch'>
           {!isCompleted ? (
-            <div className="w-full max-w-2xl p-6">
-              <div className="mb-4">
-                <span className="text-primary font-semibold">
+            <div className='w-full max-w-2xl p-6'>
+              <div className='mb-4'>
+                <span className='text-primary font-semibold'>
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </span>
               </div>
-              <h2 className="text-xl font-semibold mb-8">
+              <h2 className='text-xl font-semibold mb-8'>
                 {questions[currentQuestionIndex]}
               </h2>
               <button
                 onClick={() => {
                   SpeechRecognition.startListening({ continuous: true });
                 }}
-                className="btn-primary px-6 py-2 rounded-full mr-2"
+                className='btn-primary px-6 py-2 rounded-full mr-2'
               >
                 start recording
               </button>
@@ -146,15 +131,15 @@ export default function Page() {
                 onClick={() => {
                   SpeechRecognition.stopListening();
                 }}
-                className="btn-primary px-6 py-2 rounded-full"
+                className='btn-primary px-6 py-2 rounded-full'
               >
                 stop recording
               </button>
               <p>transcript: {transcript}</p>
-              <div className="flex justify-end">
+              <div className='flex justify-end'>
                 <button
                   onClick={handleNext}
-                  className="btn-primary px-6 py-2 rounded-full"
+                  className='btn-primary px-6 py-2 rounded-full'
                 >
                   {currentQuestionIndex === questions.length - 1
                     ? "Finish"
@@ -163,20 +148,20 @@ export default function Page() {
               </div>
             </div>
           ) : (
-            <div className="w-full">
+            <div className='w-full'>
               {!evaluation ? (
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-primary mb-4">
+                <div className='text-center'>
+                  <h2 className='text-2xl font-bold text-primary mb-4'>
                     Interview Completed!
                   </h2>
-                  <p className="mt-4 text-gray-600 mb-6">
+                  <p className='mt-4 text-gray-600 mb-6'>
                     Thank you for completing the interview. Click below to get
                     your evaluation.
                   </p>
                   <button
                     onClick={handleEvaluate}
                     disabled={isEvaluating}
-                    className="btn-primary px-6 py-2 rounded-full"
+                    className='btn-primary px-6 py-2 rounded-full'
                   >
                     {isEvaluating
                       ? "Generating Evaluation..."
@@ -184,17 +169,17 @@ export default function Page() {
                   </button>
                 </div>
               ) : (
-                <div className="p-6 bg-gray-50 rounded-lg">
-                  <h2 className="text-2xl font-bold text-primary mb-4">
+                <div className='p-6 bg-gray-50 rounded-lg'>
+                  <h2 className='text-2xl font-bold text-primary mb-4'>
                     Interview Evaluation
                   </h2>
-                  <div className="whitespace-pre-wrap text-gray-800">
+                  <div className='whitespace-pre-wrap text-gray-800'>
                     {evaluation}
                   </div>
                   <button
                     onClick={() => router.push("/interview")}
                     disabled={isEvaluating}
-                    className="btn-primary px-6 py-2 rounded-full"
+                    className='btn-primary px-6 py-2 rounded-full'
                   >
                     Go Back
                   </button>
