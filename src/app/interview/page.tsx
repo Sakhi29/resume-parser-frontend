@@ -45,67 +45,62 @@ const errorContent = {
 
 export default function page() {
   return (
-    <main className="mx-auto max-w-screen-2xl px-8 text-gray-900 lg:flex flex-row">
-      <div className="lg:flex lg:px-16 lg:justify-center lg:items-center">
-        <div className="flex flex-col gap-6">
-          <h2 className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
+    <main className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-8 text-gray-900">
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* Left Column - Content */}
+        <div className="flex flex-col space-y-6 max-w-xl mx-auto lg:mx-0">
+          <h2 className="text-primary text-2xl sm:text-3xl font-bold">
             You&apos;re all set!
           </h2>
-          <h2 className="text-gray-600 pb-2 text-2xl font-bold lg:text-3xl lg:mt-0">
+          <h2 className="text-gray-600 text-xl sm:text-2xl font-bold">
             Click{" "}
-            <span className="text-primary pb-2 text-2xl font-bold lg:text-3xl">
+            <span className="text-primary">
               &apos;Start Interview&apos;
             </span>{" "}
             to practice with tailored questions.
           </h2>
-          <div className="bg-gray-200 p-3 rounded-md border-[1.5px] border-gray-400">
-            <h1 className="text-gray-600 pb-2 text-xs !leading-relaxed font-normal lg:text-sm lg:mt-0">
-              <span className="flex items-center font-bold">
-                <Lightbulb className="mr-1" />
+
+          {/* Info Box */}
+          <div className="bg-gray-100 p-4 sm:p-5 rounded-lg border border-gray-300">
+            <h1 className="text-gray-700 text-sm sm:text-base !leading-relaxed">
+              <span className="flex items-center font-bold text-gray-900 mb-2">
+                <Lightbulb className="mr-2 h-5 w-5 text-primary" />
                 Important: Mock Interview Process
               </span>
-              <br />
-              - Your interview will consist of 10 questions tailored to your
-              resume.
-              <br />- Please answer each question as you would in a real
-              interview. <br />
-              - After completing all questions, you will receive:
-              <br />
-              &emsp;1. Detailed feedback on your responses <br />
-              &emsp;2. Suggestions for improvement <br />
-              &emsp;3. Tips to enhance your performance in real-world
-              interviews.
-              <br />
-              This mock interview is designed to help you prepare and gain
-              confidence. Good luck!
+              <ul className="space-y-2">
+                <li>- Your interview will consist of 10 questions tailored to your resume.</li>
+                <li>- Please answer each question as you would in a real interview.</li>
+                <li>- After completing all questions, you will receive:</li>
+                <li className="pl-6">1. Detailed feedback on your responses</li>
+                <li className="pl-6">2. Suggestions for improvement</li>
+                <li className="pl-6">3. Tips to enhance your performance in real-world interviews.</li>
+              </ul>
+              <p className="mt-3 text-gray-600 italic">
+                This mock interview is designed to help you prepare and gain confidence. Good luck!
+              </p>
             </h1>
           </div>
-          <div className="flex justify-center items-center">
+
+          {/* Button Container */}
+          <div className="flex justify-center pt-4">
             <StartInterviewButton 
               buttonStates={buttonStates}
               errorContent={errorContent}
             />
           </div>
-          <FlexboxSpacer
-            maxWidth={75}
-            minWidth={0}
-            className="hidden lg:block"
-          />
         </div>
-      </div>
-      <div>
-        <FlexboxSpacer
-          maxWidth={100}
-          minWidth={50}
-          className="hidden lg:block"
-        />
-        <div className="relative aspect-[600/800] h-[600px] w-[800px]">
-          <Image
-            src={interviewImage}
-            fill={true}
-            alt="interview"
-            className=""
-          />
+
+        {/* Right Column - Image */}
+        <div className="w-full max-w-2xl mx-auto lg:mx-0">
+          <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/3] w-full">
+            <Image
+              src={interviewImage}
+              fill={true}
+              alt="Interview preparation illustration"
+              className="object-contain"
+              priority
+            />
+          </div>
         </div>
       </div>
     </main>
