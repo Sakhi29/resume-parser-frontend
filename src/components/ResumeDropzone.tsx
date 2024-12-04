@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import { getS3URL, uploadFile } from "@/api/helper";
 import { toast } from "sonner";
@@ -20,7 +26,7 @@ export interface ResumeDropzoneRef {
   upload: () => Promise<void>;
 }
 
-export const ResumeDropzone = forwardRef<ResumeDropzoneRef, ResumeDropzoneProps>(
+const ResumeDropzone = forwardRef<ResumeDropzoneRef, ResumeDropzoneProps>(
   ({ onFileSelect, setIsUploading }, ref) => {
     const [files, setFiles] = useState<FileWithPreview[]>([]);
     const { data }: any = useSession();
@@ -53,7 +59,9 @@ export const ResumeDropzone = forwardRef<ResumeDropzoneRef, ResumeDropzoneProps>
 
       setIsUploading(true);
       try {
-        const url = await getS3URL(`uploads/${data?.user?.id}_${files[0].name}`);
+        const url = await getS3URL(
+          `uploads/${data?.user?.id}_${files[0].name}`
+        );
         if (url) {
           await uploadFile(files[0], url);
           toast.success(
@@ -111,3 +119,5 @@ export const ResumeDropzone = forwardRef<ResumeDropzoneRef, ResumeDropzoneProps>
     );
   }
 );
+
+export default ResumeDropzone;

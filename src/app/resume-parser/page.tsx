@@ -3,8 +3,8 @@
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ResumeDropzone, ResumeDropzoneRef } from "@/components/ResumeDropzone";
-
+import { ResumeDropzoneRef } from "@/components/ResumeDropzone";
+import ResumeDropzone from "@/components/ResumeDropzone";
 export default function Page() {
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -37,7 +37,7 @@ export default function Page() {
               resume builder
             </Link>
           </p>
-          <ResumeDropzone 
+          <ResumeDropzone
             ref={dropzoneRef}
             onFileSelect={setPdfPreview}
             setIsUploading={setIsUploading}
