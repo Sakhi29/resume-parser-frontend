@@ -119,5 +119,5 @@ const ResumeDropzone = forwardRef<ResumeDropzoneRef, ResumeDropzoneProps>(
     );
   }
 );
-
+ResumeDropzone.displayName = "ResumeDropzone";
 export default ResumeDropzone;
